@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sithaphal - The Royal Fruit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full bg-white bg-opacity-80 backdrop-blur-md z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" id="home-link" class="text-3xl font-playfair text-green-800">Sithaphal</a>
+            <div class="flex items-center space-x-6">
+                <a href="#" id="home-link-nav" class="text-gray-600 hover:text-green-800">Home</a>
+                <a href="#" id="products-link" class="text-gray-600 hover:text-green-800">Products</a>
+                <a href="#" class="text-gray-600 hover:text-green-800">About</a>
+                <a href="blog.html" class="text-gray-600 hover:text-green-800">Blog</a>
+                <a href="#contact" class="text-gray-600 hover:text-green-800">Contact</a>
+                <button id="cart-button" class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 hover:text-green-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+                <!-- Profile Icon & Dropdown -->
+                <div class="relative">
+                    <button id="profile-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-600 hover:text-green-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                    <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-20">
+                        <!-- Dropdown content changes based on login state -->
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content" class="page">
+        <!-- Hero Section with 3D Model -->
+        <section class="hero relative flex items-center justify-center text-white overflow-hidden">
+            <canvas id="sithaphal-canvas"></canvas>
+            <div class="text-center z-10">
+                <h2 class="text-6xl md:text-8xl font-playfair leading-tight">The Royal Fruit</h2>
+                <p class="text-xl mt-4">Experience the divine taste of fresh Custard Apples.</p>
+            </div>
+        </section>
+        
+        <!-- Benefits Section -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <h3 class="text-4xl font-playfair text-center mb-12 text-green-800">Nature's Perfect Gift</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-md transform hover:scale-105 transition-transform">
+                        <div class="text-green-600 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-playfair text-center mb-4">Heart-Healthy</h4>
+                        <p class="text-gray-600 text-center">Rich in antioxidants and minerals that support cardiovascular health and boost immunity.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md transform hover:scale-105 transition-transform">
+                        <div class="text-green-600 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-playfair text-center mb-4">100% Organic</h4>
+                        <p class="text-gray-600 text-center">Naturally grown without pesticides, preserving the authentic taste and nutritional value.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md transform hover:scale-105 transition-transform">
+                        <div class="text-green-600 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-playfair text-center mb-4">Energy Boost</h4>
+                        <p class="text-gray-600 text-center">Natural sugars and vitamins provide sustained energy throughout your day.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                    <div class="md:w-1/2">
+                        <h3 class="text-4xl font-playfair mb-6 text-green-800">Why Choose Our Sithaphal?</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <span class="text-green-600 text-2xl font-bold">01</span>
+                                <div>
+                                    <h4 class="text-xl font-semibold mb-2">Premium Quality</h4>
+                                    <p class="text-gray-600">Hand-picked at peak ripeness to ensure the best taste and nutritional value.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <span class="text-green-600 text-2xl font-bold">02</span>
+                                <div>
+                                    <h4 class="text-xl font-semibold mb-2">Fast Delivery</h4>
+                                    <p class="text-gray-600">Same-day delivery to ensure freshness and quality.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <span class="text-green-600 text-2xl font-bold">03</span>
+                                <div>
+                                    <h4 class="text-xl font-semibold mb-2">Satisfaction Guaranteed</h4>
+                                    <p class="text-gray-600">100% money-back guarantee if you're not completely satisfied.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <img src="https://i.imgur.com/8L1pX3S.png" alt="Fresh Sithaphal" class="rounded-lg shadow-xl w-full hover:shadow-2xl transition-shadow">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <h3 class="text-4xl font-playfair text-center mb-12 text-green-800">What Our Customers Say</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="flex text-yellow-400 mb-4 justify-center">
+                            ★★★★★
+                        </div>
+                        <p class="text-gray-600 text-center mb-6">"The best Sithaphal I've ever tasted! The delivery was quick, and the fruits were perfectly ripe."</p>
+                        <div class="text-center">
+                            <h4 class="font-semibold">Sarah Johnson</h4>
+                            <p class="text-sm text-gray-500">Regular Customer</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="flex text-yellow-400 mb-4 justify-center">
+                            ★★★★★
+                        </div>
+                        <p class="text-gray-600 text-center mb-6">"Incredible quality and freshness. The family pack is perfect for our weekly needs."</p>
+                        <div class="text-center">
+                            <h4 class="font-semibold">Michael Chen</h4>
+                            <p class="text-sm text-gray-500">Verified Buyer</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="flex text-yellow-400 mb-4 justify-center">
+                            ★★★★★
+                        </div>
+                        <p class="text-gray-600 text-center mb-6">"The organic Sithaphal is worth every penny. You can taste the difference in quality."</p>
+                        <div class="text-center">
+                            <h4 class="font-semibold">Emma Davis</h4>
+                            <p class="text-sm text-gray-500">Health Enthusiast</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recipe Section -->
+        <section class="py-20 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                 <h3 class="text-4xl font-playfair text-center mb-6 text-green-800">Discover Delicious Recipes</h3>
+                 <p class="text-gray-600 max-w-2xl mx-auto mb-8">Unlock the culinary potential of Sithaphal with unique recipes generated by AI. From smoothies to desserts, find your next favorite dish.</p>
+                <button id="get-recipes-btn" class="btn-primary px-8 py-4 rounded-lg text-lg font-semibold flex items-center space-x-2 mx-auto">
+                    <span>✨ Generate Recipes</span>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Products Page -->
+    <section id="products-page" class="page hidden py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-playfair text-green-800">Our Products</h2>
+                <div class="relative w-64">
+                    <input type="text" id="product-search" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Filter Sidebar -->
+                <aside class="lg:col-span-1 bg-gray-50 p-6 rounded-lg shadow-md h-fit">
+                    <h3 class="text-2xl font-playfair text-green-800 mb-6">Filters</h3>
+                    
+                    <!-- Sort By -->
+                    <div class="mb-6">
+                        <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-2">Sort by</label>
+                        <select id="sort-by" class="w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <option value="default">Default</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="mb-6">
+                        <label for="price-range" class="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                        <input type="range" id="price-range" min="0" max="30" value="30" class="w-full">
+                        <div class="flex justify-between text-sm text-gray-600 mt-2">
+                            <span>$0</span>
+                            <span id="price-value">$30</span>
+                        </div>
+                    </div>
+
+                    <!-- Varieties -->
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Varieties</h4>
+                        <div id="variety-filters" class="space-y-2">
+                           <!-- Checkboxes will be injected here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Quantity -->
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Quantity</h4>
+                        <div id="quantity-filters" class="space-y-2">
+                           <div class="flex items-center">
+                               <input id="qty-single" name="quantity" type="checkbox" value="single" class="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                               <label for="qty-single" class="ml-3 text-sm text-gray-600">Single Fruit</label>
+                           </div>
+                           <div class="flex items-center">
+                               <input id="qty-pack" name="quantity" type="checkbox" value="pack" class="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                               <label for="qty-pack" class="ml-3 text-sm text-gray-600">Pack (3+)</label>
+                           </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Product Grid -->
+                <div class="lg:col-span-3">
+                     <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                        <!-- Product items will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Page -->
+    <section id="auth-page" class="page hidden flex items-center justify-center py-24 bg-gray-50">
+        <div class="w-full max-w-md">
+            <div class="bg-white shadow-md rounded-lg p-8">
+                <div class="mb-6 flex border-b">
+                    <button id="signin-tab" class="flex-1 py-2 text-center font-semibold text-green-600 border-b-2 border-green-600">Sign In</button>
+                    <button id="signup-tab" class="flex-1 py-2 text-center font-semibold text-gray-500">Sign Up</button>
+                </div>
+
+                <!-- Sign In Form -->
+                <form id="signin-form">
+                    <div class="mb-4">
+                        <label for="signin-email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="signin-email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500" required>
+                    </div>
+                    <div class="mb-6 password-container">
+                        <label for="signin-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="signin-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500" required>
+                        <span class="password-toggle" data-target="signin-password">
+                            <!-- Eye icon will be injected by JS -->
+                        </span>
+                    </div>
+                    <button type="submit" class="w-full btn-primary py-2 rounded-lg">Sign In</button>
+                </form>
+
+                <!-- Sign Up Form -->
+                <form id="signup-form" class="hidden space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="signup-firstname" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" id="signup-firstname" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                        </div>
+                        <div>
+                            <label for="signup-lastname" class="block text-sm font-medium text-gray-700">Last Name <span class="text-xs text-gray-500">(Optional)</span></label>
+                            <input type="text" id="signup-lastname" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="signup-dob" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                        <input type="date" id="signup-dob" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                    </div>
+                    <div>
+                        <label for="signup-email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="signup-email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                    </div>
+                    <div class="password-container">
+                        <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="signup-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                         <span class="password-toggle" data-target="signup-password">
+                            <!-- Eye icon will be injected by JS -->
+                        </span>
+                    </div>
+                    <div class="password-container">
+                        <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                         <span class="password-toggle" data-target="signup-confirm-password">
+                            <!-- Eye icon will be injected by JS -->
+                        </span>
+                    </div>
+                    <button type="submit" class="w-full btn-primary py-2 rounded-lg">Sign Up</button>
+                </form>
+
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button id="google-signin-btn" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <svg class="w-5 h-5" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
+                            <span class="ml-4">Sign in with Google</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Modals (Cart, Recipe, Payment) -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[60] flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <div class="flex justify-between items-center border-b pb-4">
+                    <h4 class="text-2xl font-playfair text-green-800">Your Cart</h4>
+                    <button id="close-cart-button" class="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+                </div>
+                <div id="cart-items" class="mt-6 max-h-64 overflow-y-auto"></div>
+                <div class="mt-6 border-t pt-4">
+                    <div class="flex justify-between items-center font-bold text-lg">
+                        <span>Total</span>
+                        <span id="cart-total">$0.00</span>
+                    </div>
+                    <button id="checkout-button" class="w-full btn-primary py-3 rounded-lg mt-6">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="recipe-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[60] flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 h-3/4 flex flex-col">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h4 class="text-2xl font-playfair text-green-800">✨ Sithaphal Recipes</h4>
+                <button id="close-recipe-button" class="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+            </div>
+            <div id="recipe-content" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[60] flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <h4 class="text-2xl font-playfair text-green-800 mb-4">Secure Checkout</h4>
+                <form id="payment-form">
+                    <div class="mb-4">
+                        <label for="card-number" class="block text-sm font-medium text-gray-700">Card Number</label>
+                        <input type="text" id="card-number" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="•••• •••• •••• ••••">
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label for="expiry-month" class="block text-sm font-medium text-gray-700">Month</label>
+                            <input type="text" id="expiry-month" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="MM">
+                        </div>
+                        <div>
+                            <label for="expiry-year" class="block text-sm font-medium text-gray-700">Year</label>
+                            <input type="text" id="expiry-year" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="YY">
+                        </div>
+                        <div>
+                            <label for="cvc" class="block text-sm font-medium text-gray-700">CVC</label>
+                            <input type="text" id="cvc" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="•••">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full btn-primary py-3 rounded-lg">Pay Now</button>
+                    <button type="button" id="cancel-payment-button" class="w-full bg-gray-200 text-gray-800 py-3 rounded-lg mt-2">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-800 text-white pt-16 pb-8">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <!-- Subscription and Contact Info -->
+                <div class="md:col-span-1">
+                    <h5 class="font-bold text-lg mb-4">Subscribe to our emails</h5>
+                    <form class="flex max-w-sm mx-auto md:mx-0">
+                        <input type="email" placeholder="Email" class="w-full bg-gray-700 border-gray-600 text-white rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 rounded-r-md px-4 py-2 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        </button>
+                    </form>
+                    <p class="mt-4 text-sm text-gray-400">Email: sithaphal.fresh@example.com</p>
+                    <p class="text-sm text-gray-400">Contact Info: +1 (555) 123-4567</p>
+                </div>
+
+                <!-- Social Media -->
+                <div class="md:col-span-1 md:text-center">
+                    <h5 class="font-bold text-lg mb-4">Follow Us</h5>
+                    <a href="#" class="inline-flex items-center space-x-2 text-gray-300 hover:text-white transition-colors">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069 4.85c.149-3.225 1.664-4.771 4.919 4.919 1.266-.058 1.644-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
+                        <span>@sithaphal_royal</span>
+                    </a>
+                </div>
+
+                <!-- WhatsApp Button -->
+                <div class="md:col-span-1 md:text-right flex items-center justify-center md:justify-end">
+                    <a href="https://wa.me/19084993370" target="_blank" class="inline-flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.267.655 4.398 1.907 6.18l-1.299 4.745 4.833-1.276z"/></svg>
+                        <span>Chat on WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 mt-8 pt-8">
+                <div class="text-center mb-4">
+                    <p class="text-sm text-gray-400">Secure Payments</p>
+                    <div class="flex justify-center space-x-4 mt-2 text-2xl">
+                        <span>💳</span> <span></span> <span>🅿️</span> <span>📦</span>
+                    </div>
+                </div>
+                <div class="text-center text-sm text-gray-400">
+                    <div class="space-x-4">
+                        <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-white transition-colors">Refund Policy</a>
+                        <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    </div>
+                    <p class="mt-4">&copy; 2024 Sithaphal. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <div id="chat-icon" class="cursor-pointer bg-green-600 p-3 rounded-full shadow-lg hover:bg-green-700 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+    </div>
+
+    <div id="chat-window" class="hidden bg-white rounded-lg shadow-xl flex flex-col">
+        <div class="bg-green-600 text-white p-4 rounded-t-lg flex justify-between items-center">
+            <h5 class="font-bold text-lg">✨ Sithaphal AI Assistant</h5>
+            <button id="close-chat" class="text-white">&times;</button>
+        </div>
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto"></div>
+        <form id="chat-form" class="p-4 border-t flex">
+            <input type="text" id="chat-input" placeholder="Ask a question..." class="w-full border rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white rounded-r-md px-4 py-2 transition-colors">Send</button>
+        </form>
+    </div>
+
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
