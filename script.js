@@ -37,6 +37,7 @@ async function fetchProducts() {
 }
 
 
+
 // --- 3D Scene Setup ---
 const canvas = document.getElementById('sithaphal-canvas');
 if (canvas) {
@@ -89,7 +90,6 @@ if (canvas) {
     });
 }
 
-
 // --- E-commerce Logic ---
 const allProducts = [
     { id: 1, name: 'Organic', price: 5.99, image: 'https://i.imgur.com/8L1pX3S.png', variety: 'Organic', quantityType: 'single' },
@@ -100,7 +100,7 @@ const allProducts = [
     { id: 6, name: 'Jumbo Pack', price: 25.99, image: 'https://i.imgur.com/8L1pX3S.png', variety: 'Jumbo', quantityType: 'pack' },
 ];
 
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('sithaphal-cart')) || [];
 let isLoggedIn = false;
 let lastPageBeforeAuth = 'main-content';
 
@@ -133,6 +133,7 @@ const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 const getRecipesBtn = document.getElementById('get-recipes-btn');
 const recipeModal = document.getElementById('recipe-modal');
+const recipeContent = document.getElementById('recipe-content');
 const closeRecipeBtn = document.getElementById('close-recipe-button');
 const profileButton = document.getElementById('profile-button');
 const profileDropdown = document.getElementById('profile-dropdown');
@@ -151,6 +152,7 @@ function showPage(pageId) {
         // Render products when products page is shown
         if(pageId === 'products-page') {
             renderProducts(allProducts);
+            setupFilters();
         }
     }
 }
@@ -375,10 +377,26 @@ function updateCart() {
     const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
     cartCount.textContent = totalQuantity;
     cartCount.classList.toggle('hidden', totalQuantity === 0);
+    // Persist cart
+    try {
+        localStorage.setItem('sithaphal-cart', JSON.stringify(cart));
+    } catch (e) {
+        console.warn('Unable to persist cart to localStorage', e);
+    }
+}
+
+// Load cart from localStorage on init
+try {
+    const storedCart = localStorage.getItem('sithaphal-cart');
+    if (storedCart) {
+        cart = JSON.parse(storedCart);
+    }
+} catch (e) {
+    console.warn('Unable to load cart from localStorage', e);
 }
 
 // --- Gemini API Integration ---
-const apiKey = ""; // API key will be provided by the environment
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || ""; // API key from environment variables
 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 let chatHistory = [];
 
@@ -568,12 +586,57 @@ function setupEventListeners() {
             }
         }
     });
+    if (profileButton) profileButton.addEventListener('click', () => profileDropdown.classList.toggle('hidden'));
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (profileButton && profileDropdown && !profileButton.contains(e.target) && !profileDropdown.contains(e.target)) {
+            profileDropdown.classList.add('hidden');
+        }
+    });
+    
+    // Auth form tabs
+    if (signinTab) signinTab.addEventListener('click', () => {
+        signinTab.classList.add('text-green-600', 'border-b-2', 'border-green-600');
+        signinTab.classList.remove('text-gray-500');
+        signupTab.classList.add('text-gray-500');
+        signupTab.classList.remove('text-green-600', 'border-b-2', 'border-green-600');
+        signinForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
+    });
+    
+    if (signupTab) signupTab.addEventListener('click', () => {
+        signupTab.classList.add('text-green-600', 'border-b-2', 'border-green-600');
+        signupTab.classList.remove('text-gray-500');
+        signinTab.classList.add('text-gray-500');
+        signinTab.classList.remove('text-green-600', 'border-b-2', 'border-green-600');
+        signupForm.classList.remove('hidden');
+        signinForm.classList.add('hidden');
+    });
+    
+    // Auth form submissions
+    if (signinForm) signinForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Simulate successful login
+        isLoggedIn = true;
+        updateProfileDropdown();
+        showPage(lastPageBeforeAuth);
+    });
+    
+    if (signupForm) signupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Simulate successful signup
+        isLoggedIn = true;
+        updateProfileDropdown();
+        showPage(lastPageBeforeAuth);
+    });
     if (cartButton) cartButton.addEventListener('click', () => cartModal.classList.remove('hidden'));
     if (closeCartButton) closeCartButton.addEventListener('click', () => cartModal.classList.add('hidden'));
-    if (checkoutButton) checkoutButton.addEventListener('click', () => {
-        if(cart.length > 0) {
-            cartModal.classList.add('hidden');
-            paymentModal.classList.remove('hidden');
+    if (checkoutButton) checkoutButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (cart.length > 0) {
+            try { localStorage.setItem('sithaphal-cart', JSON.stringify(cart)); } catch {}
+            window.location.href = 'payment.html';
         }
     });
     if (cancelPaymentButton) cancelPaymentButton.addEventListener('click', () => paymentModal.classList.add('hidden'));
@@ -597,65 +660,122 @@ function setupEventListeners() {
 }
 
 // --- Initial Page Load ---
-setupEventListeners();
-setupFilters();
-updateProfileDropdown();
-updateCart();
-showPage('main-content'); // Start on the home page
+function initializeApp() {
+    setupEventListeners();
+    setupFilters();
+    updateProfileDropdown();
+    updateCart();
+    showPage('main-content'); // Start on the home page
+}
 
-const products = [
-    {
-        id: 1,
-        name: "Premium Organic",
-        price: 12.99,
-        image: "https://i.imgur.com/8L1pX3S.png",
-        variety: "organic",
-        quantity: "single",
-        description: "Hand-picked organic Sithaphal, perfect for health enthusiasts."
-    },
-    {
-        id: 2,
-        name: "Family Pack",
-        price: 29.99,
-        image: "https://i.imgur.com/8L1pX3S.png",
-        variety: "regular",
-        quantity: "pack",
-        description: "Value pack of 3 premium Sithaphals, ideal for families."
-    },
-    {
-        id: 3,
-        name: "Wild Harvested",
-        price: 15.99,
-        image: "https://i.imgur.com/8L1pX3S.png",
-        variety: "wild",
-        quantity: "single",
-        description: "Naturally grown wild Sithaphal with intense flavor."
-    },
-    {
-        id: 4,
-        name: "Premium Grade A",
-        price: 18.99,
-        image: "https://i.imgur.com/8L1pX3S.png",
-        variety: "premium",
-        quantity: "single",
-        description: "Top-grade Sithaphal selected for perfect ripeness."
-    },
-    {
-        id: 5,
-        name: "Bulk Purchase",
-        price: 45.99,
-        image: "https://i.imgur.com/8L1pX3S.png",
-        variety: "regular",
-        quantity: "pack",
-        description: "Bulk pack of 5 Sithaphals for extended enjoyment."
-    },
-    {
-        id: 6,
-        name: "Special Reserve",
-        price: 22.99,
-        image: "https://i.imgur.com/8L1pX3S.png",
-        variety: "premium",
-        quantity: "single",
-        description: "Limited edition Sithaphal from select orchards."
+initializeApp();
+
+// --- Parallax Scroll Effect for Sithaphal ---
+function initParallax() {
+    const parallaxSithaphal = document.getElementById('parallax-sithaphal');
+    
+    if (!parallaxSithaphal) {
+        console.log('Parallax element not found, retrying...');
+        setTimeout(initParallax, 100);
+        return;
     }
-];
+    
+    console.log('Parallax element found, initializing...');
+    
+    function updateParallax() {
+        const scrollY = window.scrollY;
+        
+        // Calculate rotation based on scroll position
+        const rotation = scrollY * 0.3; // Rotation speed
+        const scale = 1 + (scrollY * 0.0003); // Scale effect
+        const translateY = scrollY * 0.2; // Parallax movement
+        
+        // Apply transformations with proper CSS
+        parallaxSithaphal.style.transform = `translateY(${translateY}px) rotate(${rotation}deg) scale(${scale})`;
+        parallaxSithaphal.style.transformOrigin = 'center center';
+        
+        console.log(`Scroll: ${scrollY}, Rotation: ${rotation}deg`);
+    }
+
+    // Throttled scroll event for better performance
+    let ticking = false;
+    function handleScroll() {
+        if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+            setTimeout(() => { ticking = false; }, 16);
+        }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    updateParallax(); // Initialize
+}
+
+// Initialize parallax after DOM is ready
+document.addEventListener('DOMContentLoaded', initParallax);
+// Also try immediate initialization
+initParallax();
+
+// Add parallax effect to Sithaphal image
+function addParallaxEffect() {
+    const sithaphalImage = document.getElementById('sithaphal-image');
+    if (!sithaphalImage) return;
+
+    let ticking = false;
+    
+    function updateParallax() {
+        const scrolled = window.pageYOffset;
+        const parallax = scrolled * 0.5;
+        const scale = 1 + (scrolled * 0.0005);
+        
+        sithaphalImage.style.transform = `translateY(${parallax}px) scale(${scale})`;
+        ticking = false;
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+        }
+    }
+
+    window.addEventListener('scroll', requestTick);
+}
+
+// Animated Counter Function
+function animateCounters() {
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200; // The lower the slower
+
+    counters.forEach(counter => {
+        const updateCount = () => {
+            const target = +counter.getAttribute('data-target');
+            const count = +counter.innerText;
+
+            // Lower inc to slow and higher to slow
+            const inc = target / speed;
+
+            // Check if target is reached
+            if (count < target) {
+                // Add inc to count and output in counter
+                counter.innerText = Math.ceil(count + inc);
+                // Call function every ms
+                setTimeout(updateCount, 1);
+            } else {
+                counter.innerText = target;
+            }
+        };
+
+        updateCount();
+    });
+}
+
+// Initialize animations when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    addParallaxEffect();
+    
+    // Start counter animation after a delay
+    setTimeout(() => {
+        animateCounters();
+    }, 1000);
+});
